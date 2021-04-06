@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.example.elvamao.ui.widget.RecipeCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/recipe_item_card_side_margin"
+        android:layout_marginEnd="@dimen/recipe_item_card_side_margin"
+        android:layout_marginBottom="@dimen/recipe_item_card_bottom_margin"
+        android:onClick="@{clickListener}"
+        app:cardElevation="@dimen/recipe_item_card_elevation"
+        app:cardPreventCornerOverlap="false"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Recipe.Card">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_recipe_item_image"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/recipe_item_image_height"
+                android:scaleType="centerCrop"
+                app:imageFromUrl="@{recipe.imageUrl}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <LinearLayout
+                android:id="@+id/ll_button_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_like"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{Long.toString(recipe.aggregateLikes)}"
+                    app:icon="@drawable/ic_like"
+                    app:iconSize="12dp"
+                    android:layout_weight="1"
+                    tools:ignore="MissingConstraints" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_collect"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{Long.toString(recipe.collectCount)}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:icon="@drawable/ic_collect"
+                    app:iconSize="12dp"
+                    android:layout_weight="1"
+                    tools:ignore="MissingConstraints" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{Long.toString(recipe.shareCount)}"
+                    app:icon="@drawable/ic_share"
+                    app:iconSize="12dp"
+                    tools:ignore="MissingConstraints"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/recipe_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:text="@{recipe.title}"
+                android:paddingLeft="12dp"
+                android:textAppearance="?attr/textAppearanceListItemSmall"
+                app:layout_constraintBottom_toTopOf="@id/ll_button_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_recipe_item_image" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.example.elvamao.ui.widget.RecipeCardView>
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="recipe"
+            type="com.example.elvamao.data.RecipeData" />
+    </data>
+
+</layout>
