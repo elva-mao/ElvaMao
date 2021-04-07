@@ -10,38 +10,43 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.elvamao.R
+import com.example.elvamao.data.RecipeData
 import com.example.elvamao.databinding.FragmentRecommendBinding
+import com.example.elvamao.listeners.IUserActionListener
 import com.example.elvamao.ui.widget.PullRefreshRecyclerView
 import com.example.elvamao.ui.widget.RecipeAdapter
-import com.example.elvamao.viewmodel.RecipeListViewModel
+import com.example.elvamao.viewmodel.RecommendViewModel
 
-class RecommendFragment : Fragment() {
+class RecommendFragment : Fragment(), IUserActionListener {
 
-    private lateinit var recipeListViewModel: RecipeListViewModel
-    private lateinit var databinding: FragmentRecommendBinding
-    private lateinit var recipeAdapter: RecipeAdapter
-    private lateinit var recyclerView : PullRefreshRecyclerView
+    private lateinit var mRecommendViewModel: RecommendViewModel
+    private lateinit var mDatabinding: FragmentRecommendBinding
+    private lateinit var mRecipeAdapter: RecipeAdapter
+    private lateinit var mRecyclerView : PullRefreshRecyclerView
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        databinding = FragmentRecommendBinding.inflate(LayoutInflater.from(context), container, false)
+        mDatabinding = FragmentRecommendBinding.inflate(LayoutInflater.from(context), container, false)
         setUpRecyclerView()
         setupViewModel()
-        return databinding.root
+        return mDatabinding.root
     }
 
     private fun setUpRecyclerView() {
-        recipeAdapter = activity?.let { RecipeAdapter(it) }!!
-        recyclerView = databinding.pullRefreshRecyclerView
-        recyclerView.setEnableLoadMore(true)
-        recyclerView.setEnablePullRefresh(true)
-        recyclerView.setGridLayout(2)
-        recyclerView.setPullLoadMoreRefreshListener(object : PullRefreshRecyclerView.PullRefreshLoadMoreListener{
+        mRecipeAdapter = activity?.let {
+            RecipeAdapter(it).apply { setUserInteractionListener(this@RecommendFragment) }
+        }!!
+        mRecyclerView = mDatabinding.pullRefreshRecyclerView
+        mRecyclerView.setEnableLoadMore(true)
+        mRecyclerView.setEnablePullRefresh(true)
+        mRecyclerView.setGridLayout(2)
+        mRecyclerView.setPullLoadMoreRefreshListener(object : PullRefreshRecyclerView.PullRefreshLoadMoreListener{
             override fun onRefresh() {
-                recipeListViewModel.refreshData()
+                mRecommendViewModel.refreshData()
             }
 
             override fun onLoadMore() {
@@ -49,26 +54,45 @@ class RecommendFragment : Fragment() {
             }
         })
 
-        recyclerView.setAdapter(recipeAdapter)
+        mRecyclerView.setAdapter(mRecipeAdapter)
 
     }
 
     private fun setupViewModel() {
-        recipeListViewModel = ViewModelProvider(this).get(RecipeListViewModel::class.java)
-        recipeListViewModel.getRecipeListLiveData().observe(viewLifecycleOwner, Observer {
-            recipeAdapter.initAdapterData(it)
-            databinding.circularProgressIndicator.visibility = View.GONE
+        mRecommendViewModel = ViewModelProvider(this).get(RecommendViewModel::class.java)
+        mRecommendViewModel.setContext(activity)
+        mRecommendViewModel.getRecipeListLiveData().observe(viewLifecycleOwner, Observer {
+            mRecipeAdapter.initAdapterData(it)
+            mDatabinding.circularProgressIndicator.visibility = View.GONE
             Log.d(RecommendFragment::class.java.simpleName, "setupViewModel |  data size ${it.size}")
             updateRefreshView(it.size)
         })
     }
 
+    /**
+     * handle refresh callback
+     * hide the loading view and show toast to user
+     */
     private fun updateRefreshView(dataSize : Int) {
-        if(recyclerView.isRefreshing()) {
-            recyclerView.setRefreshing(false)
+        if(mRecyclerView.isRefreshing()) {
+            mRecyclerView.setRefreshing(false)
             var toast = Toast.makeText(activity, "Recommend $dataSize recipes for you", Toast.LENGTH_LONG)
             toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 100, 100)
             toast.show()
         }
+    }
 
-    }}
+    override fun onClickLike() {
+        //async network request to update data on server
+    }
+
+    override fun onClickCollect(recipeData: RecipeData) {
+        //save it to local db
+       mRecommendViewModel.saveRecipeDataToDB(recipeData)
+    }
+
+    override fun onClickShare() {
+        Toast.makeText(activity, activity?.resources?.getString(R.string.share_recipe_to_social_platforms), Toast.LENGTH_LONG).show()
+        //todo later integrate the share sdk
+    }
+}

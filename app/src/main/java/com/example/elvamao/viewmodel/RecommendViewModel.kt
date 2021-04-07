@@ -1,5 +1,6 @@
 package com.example.elvamao.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,30 +12,35 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class RecipeListViewModel() : ViewModel() {
+class RecommendViewModel: ViewModel() {
     companion object {
-        val TAG = RecipeListViewModel::class.simpleName
+        val TAG = RecommendViewModel::class.simpleName
     }
-    private val recipeRepository: RecipeRepository by lazy { RecipeRepository() }
+    private var mContext : Context? = null
+    private val mRecipeRepository: RecipeRepository by lazy { RecipeRepository(mContext) }
     /**
      * live data stores recipe data List
      */
-    private var recipeListLiveData : MutableLiveData<MutableList<RecipeData>> = MutableLiveData<MutableList<RecipeData>>()
+    private var mRecipeListLiveData : MutableLiveData<MutableList<RecipeData>> = MutableLiveData<MutableList<RecipeData>>()
 
-    private var viewModelJob = Job()
-    private val coroutineScope = CoroutineScope( viewModelJob + Dispatchers.Main )
+    private var mViewModelJob = Job()
+    private val mCoroutineScope = CoroutineScope( mViewModelJob + Dispatchers.Main )
+
+    fun setContext(context : Context?) {
+        mContext = context
+    }
 
     fun getRecipeListLiveData(): MutableLiveData<MutableList<RecipeData>>{
         loadRecipeDataList()
-        return recipeListLiveData
+        return mRecipeListLiveData
     }
 
     private fun loadRecipeDataList() {
-        coroutineScope.launch {
-            var recipeDataList = recipeRepository.fetchRecipeDataList()
+        mCoroutineScope.launch(Dispatchers.IO){
+            var recipeDataList = mRecipeRepository.fetchRecipeDataList()
             try {
                 Log.d(TAG,"getRecipeListLiveData | recipeDataList $recipeDataList")
-                recipeListLiveData.postValue(recipeDataList)
+                mRecipeListLiveData.postValue(recipeDataList)
             }catch (e : Exception) {
                 Log.d(TAG,"getRecipeListLiveData | exception ${e.message}")
             }
@@ -45,9 +51,15 @@ class RecipeListViewModel() : ViewModel() {
         loadRecipeDataList()
     }
 
+    fun saveRecipeDataToDB(recipeData: RecipeData) {
+        mCoroutineScope.launch(Dispatchers.IO){
+            mRecipeRepository.saveRecipeDataToDB(recipeData)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
-        viewModelJob.cancel()
+        mViewModelJob.cancel()
     }
 
 }

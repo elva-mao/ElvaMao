@@ -6,4 +6,6 @@
     <string name="title_Recipe_Detail">Detail</string>
     <string name="load_more_text">loading...</string>
     <string name="refresh_completed">recommend</string>
+    <string name="share_recipe_to_social_platforms">Share This Recipe!</string>
+    <string name="no_collected_recipe_data">Oops! It\'s empty here! Collect some recipes from recommend feeds</string>
 </resources>

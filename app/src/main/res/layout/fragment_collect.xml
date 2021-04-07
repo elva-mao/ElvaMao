@@ -4,9 +4,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="@dimen/margin_small"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <TextView
+            android:id="@+id/tv_no_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_collected_recipe_data"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:textSize="@dimen/collect_no_data_text_size"
+            android:textColor="@color/cardview_dark_background"/>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/circular_progress_indicator"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:indeterminate="true"
+            android:layout_gravity="center"/>
+
+        <com.example.elvamao.ui.widget.PullRefreshRecyclerView
             android:id="@+id/pull_refresh_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

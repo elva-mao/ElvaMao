@@ -2,30 +2,47 @@ package com.example.elvamao.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlin.random.Random
 
-data class RecipeData(@SerializedName("id") var id : Long) : Parcelable{
+@Entity(tableName = "recipe")
+data class RecipeData(@PrimaryKey @SerializedName("id") var id : Long) : Parcelable{
+    @ColumnInfo
     @SerializedName("title")
     var title : String = ""
+    @ColumnInfo
     @SerializedName("image")
     var imageUrl : String = ""
+    @ColumnInfo
     @SerializedName("aggregateLikes")
     var aggregateLikes : Long = 0L
+    @ColumnInfo
     @SerializedName("readyInMinutes")
     var readyInMinutes : Int = 0
-
+    //as the rest point response data don't have collect or share count data, just fake some data
+    @ColumnInfo
+    var collectCount : Long = 0
+    @ColumnInfo
+    var shareCount : Long = 0
+    @ColumnInfo
+    var isLiked : Boolean = false
+    @ColumnInfo
+    var isCollected : Boolean = false
     // encounter a problem that this field content size is too big which cause data lose when use intent to trans between activitys
+    @Ignore
     @SerializedName("extendedIngredients")
     var extendedIngredients: MutableList<Ingredients> = mutableListOf()
+    @Ignore
     @SerializedName("analyzedInstructions")
     var instructions: MutableList<Instruction> = mutableListOf()
+    @ColumnInfo
     @SerializedName("instructions")
     var htmlInstructions : String = ""
 
-    //as the rest point response data don't have collect or share count data, just fake some data
-    var collectCount : Long = 0
-    var shareCount : Long = 0
 
     constructor(parcel: Parcel) : this(parcel.readLong()) {
         title = parcel.readString().toString()
@@ -77,7 +94,7 @@ data class RecipeData(@SerializedName("id") var id : Long) : Parcelable{
     }
 
     override fun toString(): String {
-        return "RecipeData(id=$id, title='$title', imageUrl='$imageUrl', aggregateLikes=$aggregateLikes, readyInMinutes=$readyInMinutes, extendedIngredients=$extendedIngredients, instructions=$instructions, htmlInstructions='$htmlInstructions', collectCount=$collectCount, shareCount=$shareCount)"
+        return "RecipeData(id=$id, title='$title', imageUrl='$imageUrl', aggregateLikes=$aggregateLikes, readyInMinutes=$readyInMinutes, collectCount=$collectCount, shareCount=$shareCount, isLiked=$isLiked, isCollected=$isCollected, extendedIngredients=$extendedIngredients, instructions=$instructions, htmlInstructions='$htmlInstructions')"
     }
 
     companion object CREATOR : Parcelable.Creator<RecipeData> {
@@ -89,7 +106,6 @@ data class RecipeData(@SerializedName("id") var id : Long) : Parcelable{
             return arrayOfNulls(size)
         }
     }
-
 
 }
 

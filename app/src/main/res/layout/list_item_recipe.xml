@@ -44,7 +44,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{Long.toString(recipe.aggregateLikes)}"
-                    app:icon="@drawable/ic_like"
+                    app:icon="@{recipe.isLiked ? @drawable/ic_liked : @drawable/ic_like}"
+                    android:maxLines="1"
                     app:iconSize="12dp"
                     android:layout_weight="1"
                     tools:ignore="MissingConstraints" />
@@ -55,8 +56,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{Long.toString(recipe.collectCount)}"
+                    android:maxLines="1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:icon="@drawable/ic_collect"
+                    app:icon="@{recipe.isCollected ? @drawable/ic_collected : @drawable/ic_collect}"
                     app:iconSize="12dp"
                     android:layout_weight="1"
                     tools:ignore="MissingConstraints" />
@@ -67,6 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{Long.toString(recipe.shareCount)}"
+                    android:maxLines="1"
                     app:icon="@drawable/ic_share"
                     app:iconSize="12dp"
                     tools:ignore="MissingConstraints"

@@ -5,24 +5,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvamao.R
 import com.example.elvamao.data.RecipeData
 import com.example.elvamao.databinding.ListItemRecipeBinding
+import com.example.elvamao.listeners.IUserActionListener
 import com.example.elvamao.ui.recommend.RecipeDetailActivity
-import com.example.elvamao.ui.recommend.RecipeDetailFragment.Companion.KEY_RECIPE_ID
 
 class RecipeAdapter(private val context : Context) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
     companion object{
         val TAG = RecipeAdapter::class.simpleName
     }
 
-    private val recipeDatas : MutableList<RecipeData> by lazy { mutableListOf<RecipeData>()}
+    private val mRecipeDatas : MutableList<RecipeData> by lazy { mutableListOf<RecipeData>()}
+    private lateinit var mUserActionListener : IUserActionListener
 
     fun initAdapterData(recipes: MutableList<RecipeData>) {
-        recipeDatas.apply {
+        mRecipeDatas.apply {
             clear()
             addAll(recipes)
             for(recipe in this){
@@ -30,25 +29,32 @@ class RecipeAdapter(private val context : Context) : RecyclerView.Adapter<Recipe
             }
         }
         notifyDataSetChanged()
-        Log.d(TAG, "initAdapterData | recipeDatas : $recipeDatas")
+        Log.d(TAG, "initAdapterData | recipeDatas : $mRecipeDatas")
+    }
+
+    fun setUserInteractionListener(listener: IUserActionListener) {
+        mUserActionListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         Log.d(TAG, "onCreateViewHolder")
-        return  RecipeViewHolder(ListItemRecipeBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return  RecipeViewHolder(ListItemRecipeBinding.inflate(LayoutInflater.from(parent.context), parent, false), mUserActionListener)
     }
 
-    override fun getItemCount(): Int = recipeDatas.size
+    override fun getItemCount(): Int = mRecipeDatas.size
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        holder.bindData(recipeDatas[position])
-        Log.d(TAG, "onBindViewHolder | recipe : $recipeDatas[position]")
+        holder.bindData(mRecipeDatas[position])
+       // Log.d(TAG, "onBindViewHolder | recipe data : $mRecipeDatas[position]")
     }
 
-    class RecipeViewHolder(private val databinding : ListItemRecipeBinding) : RecyclerView.ViewHolder(databinding.root), View.OnClickListener {
+    class RecipeViewHolder(private val databinding : ListItemRecipeBinding, private val listener: IUserActionListener) : RecyclerView.ViewHolder(databinding.root), View.OnClickListener {
         init {
             databinding.ivRecipeItemImage.setOnClickListener(this)
             databinding.recipeItemTitle.setOnClickListener(this)
+            databinding.btnLike.setOnClickListener(this)
+            databinding.btnCollect.setOnClickListener(this)
+            databinding.btnShare.setOnClickListener(this)
         }
 
         private lateinit var recipeData : RecipeData
@@ -56,7 +62,6 @@ class RecipeAdapter(private val context : Context) : RecyclerView.Adapter<Recipe
         fun bindData(recipe : RecipeData) {
             recipeData = recipe
             databinding.recipe = recipe
-            //Log.d(TAG," reg $recipe")
         }
 
         override fun onClick(view: View?) {
@@ -64,14 +69,61 @@ class RecipeAdapter(private val context : Context) : RecyclerView.Adapter<Recipe
             //Navigation.findNavController(itemView).navigate(R.id.to_detail, bundle)
             when(view?.id) {
                 R.id.iv_recipe_item_image, R.id.recipe_item_title -> { RecipeDetailActivity.start(databinding.root.context, recipeData)}
-                R.id.btn_like -> updateItem()
+                R.id.btn_like -> handleLikeBtnClicked()
+                R.id.btn_collect -> handleCollectBtnClicked()
+                R.id.btn_share -> handleShareBtnClicked()
             }
-
-
         }
 
-        private fun updateItem() {
-            //todo update ui and adapter datas , add some animations
+        /**
+         * i.update cache data
+         * ii.refresh ui
+         * iii.async request to server to update the recipe data
+         */
+        private fun handleLikeBtnClicked() {
+            //update cache data
+            if(!recipeData.isLiked) {
+                recipeData.aggregateLikes++
+            } else {
+                recipeData.aggregateLikes--
+            }
+            recipeData.isLiked = !recipeData.isLiked
+
+            //refresh ui
+            databinding.recipe = recipeData
+
+            //async request to update the recipe data,
+            //as there is no rest api to request, mark it todo
+        }
+
+        /**
+         * i.update cache data
+         * ii.refresh ui
+         * iii.async request to server to update the recipe data / or save to db
+         */
+        private fun handleCollectBtnClicked() {
+            if(!recipeData.isCollected) {
+                recipeData.collectCount++
+            } else {
+                recipeData.collectCount--
+            }
+            recipeData.isCollected = !recipeData.isCollected
+
+            //refresh ui
+            databinding.recipe = recipeData
+
+            //async request to update the recipe data,
+            //as there is no rest api to request, mark it todo
+            //here async save data to db
+            listener?.let {
+                it.onClickCollect(recipeData)
+            }
+        }
+
+        private fun handleShareBtnClicked(){
+            listener?.let {
+                it.onClickShare()
+            }
         }
     }
 

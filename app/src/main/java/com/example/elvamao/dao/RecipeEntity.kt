@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.elvamao.data.Ingredients
 
-@Entity(tableName = "recipe")
+
 data class  RecipeEntity(
     @PrimaryKey val uid: Long,
     @ColumnInfo(name = "title") val title: String?,

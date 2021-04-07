@@ -1,16 +1,19 @@
 package com.example.elvamao.dao
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
+import com.example.elvamao.data.RecipeData
 
+@Dao
 interface RecipeDao {
     @Query("SELECT * FROM recipe")
-    fun getAllRecipes() : MutableList<RecipeEntity>
+    fun getAllRecipes() : MutableList<RecipeData>
 
     @Insert
-    fun insert(vararg recipeEntitys: RecipeEntity)
+    fun insert(vararg recipeDatas: RecipeData)
 
     @Delete()
-    fun delete(recipeEntity: RecipeEntity)
+    fun delete(recipeData: RecipeData)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(recipeData: RecipeData?)
 }
