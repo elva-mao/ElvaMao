@@ -45,10 +45,10 @@ class RecipeAdapter(private val context : Context) : RecyclerView.Adapter<Recipe
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         holder.bindData(mRecipeDatas[position])
-       // Log.d(TAG, "onBindViewHolder | recipe data : $mRecipeDatas[position]")
+        Log.d(TAG, "onBindViewHolder | recipe data : $mRecipeDatas[position]")
     }
 
-    class RecipeViewHolder(private val databinding : ListItemRecipeBinding, private val listener: IUserActionListener) : RecyclerView.ViewHolder(databinding.root), View.OnClickListener {
+    class RecipeViewHolder(private val databinding : ListItemRecipeBinding, private val listener: IUserActionListener?) : RecyclerView.ViewHolder(databinding.root), View.OnClickListener {
         init {
             databinding.ivRecipeItemImage.setOnClickListener(this)
             databinding.recipeItemTitle.setOnClickListener(this)
