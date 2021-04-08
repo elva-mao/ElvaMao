@@ -32,17 +32,34 @@ class RecommendViewModel: ViewModel() {
 
     fun getRecipeListLiveData(): MutableLiveData<MutableList<RecipeData>>{
         loadRecipeDataList()
+        Log.d(TAG,"getRecipeListLiveData")
         return mRecipeListLiveData
     }
 
     private fun loadRecipeDataList() {
-        mCoroutineScope.launch(Dispatchers.IO){
+        mCoroutineScope.launch(Dispatchers.Default){
             var recipeDataList = mRecipeRepository.fetchRecipeDataList()
             try {
-                Log.d(TAG,"getRecipeListLiveData | recipeDataList $recipeDataList")
+                Log.d(TAG,"loadRecipeDataList | recipeDataList $recipeDataList")
                 mRecipeListLiveData.postValue(recipeDataList)
             }catch (e : Exception) {
-                Log.d(TAG,"getRecipeListLiveData | exception ${e.message}")
+                Log.d(TAG,"loadRecipeDataList | exception ${e.message}")
+            }
+        }
+    }
+
+    fun loadMoreRecipes() {
+        mCoroutineScope.launch (Dispatchers.Default) {
+            var recipeDataList = mRecipeRepository.loadMoreRecipesFromServer()
+            try {
+                Log.d(TAG,"loadMoreRecipes | load more recipes size : ${recipeDataList.size}")
+                val newRecipes = mRecipeListLiveData.value?.apply {
+                    addAll(recipeDataList)
+                }
+                Log.d(TAG,"loadMoreRecipes | new recipes size : ${newRecipes?.size}")
+                mRecipeListLiveData.postValue(newRecipes)
+            }catch (e : Exception) {
+                Log.d(TAG,"loadMoreRecipes | exception ${e.message}")
             }
         }
     }

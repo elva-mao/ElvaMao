@@ -8,8 +8,11 @@ interface RecipeDao {
     @Query("SELECT * FROM recipe")
     fun getAllRecipes() : MutableList<RecipeData>
 
-    @Insert
-    fun insert(vararg recipeDatas: RecipeData)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(vararg recipeDatas: RecipeData)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(recipeData: RecipeData) : Long
 
     @Delete()
     fun delete(recipeData: RecipeData)

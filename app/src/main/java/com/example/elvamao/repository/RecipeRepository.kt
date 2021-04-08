@@ -10,6 +10,8 @@ import com.example.elvamao.service.RetrofitClient
 class RecipeRepository(context : Context?) {
     companion object {
         val TAG = RecipeRepository::class.simpleName
+        val RESULT_CODE_SUCCESS = 0
+        val PAGE_SIZE = 10
     }
 
 
@@ -18,15 +20,32 @@ class RecipeRepository(context : Context?) {
 
     suspend fun fetchRecipeDataList() : MutableList<RecipeData> {
         val apiService = RetrofitClient.getApiService()
-        return apiService.getRandomRecipes().recipeList
+        val response = apiService.getRandomRecipes(PAGE_SIZE)
+        val recipeList = mutableListOf<RecipeData>()
+        if (response.retCode == RESULT_CODE_SUCCESS) {
+            return response.recipeList
+        } else {
+            // todo notify ui, show friendly tips to user
+        }
+         response.recipeList
+        return recipeList
     }
 
-    suspend fun loadCollectedRecipesFromDB() : MutableList<RecipeData>? {
+    suspend fun loadMoreRecipesFromServer() : MutableList<RecipeData>{
+        return fetchRecipeDataList()
+    }
+
+    fun loadCollectedRecipesFromDB() : MutableList<RecipeData>? {
        return mDao?.getAllRecipes()
     }
 
-    suspend fun saveRecipeDataToDB(recipeData: RecipeData) {
-        mDao?.update(recipeData)
-        Log.d(TAG, "saveRecipeDataToDB | recipe $recipeData")
+    fun saveRecipeDataToDB(recipeData: RecipeData) {
+        if(recipeData.isCollected){
+            val  uid = mDao?.insert(recipeData)
+            Log.d(TAG, "saveRecipeDataToDB | insert or update recipeData $recipeData, uid $uid")
+        }else{
+            val  uid = mDao?.delete(recipeData)
+            Log.d(TAG, "saveRecipeDataToDB | delete recipeData $recipeData, uid $uid")
+        }
     }
 }

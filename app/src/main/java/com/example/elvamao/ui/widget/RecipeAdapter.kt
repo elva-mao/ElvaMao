@@ -18,7 +18,7 @@ class RecipeAdapter(private val context : Context) : RecyclerView.Adapter<Recipe
     }
 
     private val mRecipeDatas : MutableList<RecipeData> by lazy { mutableListOf<RecipeData>()}
-    private lateinit var mUserActionListener : IUserActionListener
+    private var mUserActionListener : IUserActionListener ?= null
 
     fun initAdapterData(recipes: MutableList<RecipeData>) {
         mRecipeDatas.apply {

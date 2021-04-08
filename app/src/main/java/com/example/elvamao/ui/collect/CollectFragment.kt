@@ -21,6 +21,9 @@ import com.example.elvamao.ui.widget.PullRefreshRecyclerView
 import com.example.elvamao.ui.widget.RecipeAdapter
 import com.example.elvamao.viewmodel.CollectViewModel
 
+/**
+ * The recipe datas in collect feeds are loaded from database
+ */
 class CollectFragment : Fragment() {
 
     companion object{
@@ -97,10 +100,10 @@ class CollectFragment : Fragment() {
         mRecyclerView = mDatabinding.pullRefreshRecyclerView
         mRecyclerView.setEnableLoadMore(true)
         mRecyclerView.setEnablePullRefresh(true)
-        mRecyclerView.setLinearLayout()
+        mRecyclerView.setGridLayout(2)
         mRecyclerView.setPullLoadMoreRefreshListener(object : PullRefreshRecyclerView.PullRefreshLoadMoreListener{
             override fun onRefresh() {
-
+                mViewModel.getCollectedRecipesLiveData()
             }
 
             override fun onLoadMore() {
