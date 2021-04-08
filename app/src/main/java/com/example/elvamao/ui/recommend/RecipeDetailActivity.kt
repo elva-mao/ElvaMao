@@ -98,35 +98,35 @@ class RecipeDetailActivity : AppCompatActivity() {
 
     }
 
-    private fun dynamicCreateIngredientsView() {
-        val container = databinding.recipeIngredientsContainer
-        recipeData?.let {
-            val ingredientList = recipeData.extendedIngredients
-            for (ingredient in ingredientList) {
-                val amountText = ingredient.amount.toString() + " " + ingredient.unit
-                val nameText = ingredient.name
-                val richContent = Utils.getRichContent(this, amountText, nameText)
-                val itemView = createTextItemView(richContent)
-                container.addView(itemView)
-            }
-        }
-    }
+//    private fun dynamicCreateIngredientsView() {
+//        val container = databinding.recipeIngredientsContainer
+//        recipeData?.let {
+//            val ingredientList = recipeData.extendedIngredients
+//            for (ingredient in ingredientList) {
+//                val amountText = ingredient.amount.toString() + " " + ingredient.unit
+//                val nameText = ingredient.name
+//                val richContent = Utils.getRichContent(this, amountText, nameText)
+//                val itemView = createTextItemView(richContent)
+//                container.addView(itemView)
+//            }
+//        }
+//    }
 
-    private fun dynamicCreateInstructionView() {
-        val container = databinding.recipeIngredientsContainer
-        recipeData?.let {
-            val instructionList = recipeData.instructions
-            var stepNum = 1
-            for (instruction in instructionList) {
-                val leftText = stepNum.toString()
-                val rightText = instruction.name ?: ""
-                stepNum++
-                val richContent = Utils.getRichContent(this, leftText, rightText)
-                val itemView = createTextItemView(richContent)
-                container.addView(itemView)
-            }
-        }
-    }
+//    private fun dynamicCreateInstructionView() {
+//        val container = databinding.recipeIngredientsContainer
+//        recipeData?.let {
+//            val instructionList = recipeData.instructions
+//            var stepNum = 1
+//            for (instruction in instructionList) {
+//                val leftText = stepNum.toString()
+//                val rightText = instruction.name ?: ""
+//                stepNum++
+//                val richContent = Utils.getRichContent(this, leftText, rightText)
+//                val itemView = createTextItemView(richContent)
+//                container.addView(itemView)
+//            }
+//        }
+//    }
 
     private fun createTextItemView(richContent : Spannable) : View{
         val textItemDataBinding = RichTextItemBinding.inflate(LayoutInflater.from(this))

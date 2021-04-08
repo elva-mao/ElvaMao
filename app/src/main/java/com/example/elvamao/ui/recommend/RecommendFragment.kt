@@ -17,7 +17,9 @@ import com.example.elvamao.listeners.IUserActionListener
 import com.example.elvamao.ui.widget.PullRefreshRecyclerView
 import com.example.elvamao.ui.widget.RecipeAdapter
 import com.example.elvamao.viewmodel.RecommendViewModel
-
+/**
+ * The recipe datas in recommend feeds are loaded from server
+ */
 class RecommendFragment : Fragment(), IUserActionListener {
 
     private lateinit var mRecommendViewModel: RecommendViewModel
@@ -50,12 +52,11 @@ class RecommendFragment : Fragment(), IUserActionListener {
             }
 
             override fun onLoadMore() {
-//                recipeViewModel.loadMoreRecommendData()
+                mRecommendViewModel.loadMoreRecipes()
+                mRecyclerView.setIsLoadingMore(true)
             }
         })
-
         mRecyclerView.setAdapter(mRecipeAdapter)
-
     }
 
     private fun setupViewModel() {
@@ -66,12 +67,22 @@ class RecommendFragment : Fragment(), IUserActionListener {
             mDatabinding.circularProgressIndicator.visibility = View.GONE
             Log.d(RecommendFragment::class.java.simpleName, "setupViewModel |  data size ${it.size}")
             updateRefreshView(it.size)
+            updateLoadMoreView()
         })
+    }
+    /**
+     * handle load more callback
+     * hide the loading view
+     */
+    private fun updateLoadMoreView(){
+        if(mRecyclerView.isLoadingMore()) {
+            mRecyclerView.setIsLoadingMore(false)
+        }
     }
 
     /**
      * handle refresh callback
-     * hide the loading view and show toast to user
+     * hide the refreshing view and show toast to user
      */
     private fun updateRefreshView(dataSize : Int) {
         if(mRecyclerView.isRefreshing()) {

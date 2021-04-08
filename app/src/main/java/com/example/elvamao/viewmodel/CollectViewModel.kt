@@ -34,7 +34,11 @@ class CollectViewModel : ViewModel() {
         return collectedRecipesLiveData
     }
 
-    private fun loadCollectedRecipesFromDB() {
+    fun loadMoreRecipesFromServer(){
+
+    }
+
+     private fun loadCollectedRecipesFromDB() {
         coroutineScope.launch(Dispatchers.IO) {
             var recipeDataList = recipeRepository.loadCollectedRecipesFromDB()
             try {

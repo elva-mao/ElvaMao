@@ -1,11 +1,13 @@
 package com.example.elvamao.ui.collect
 
+import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,12 +15,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvamao.R
 import com.example.elvamao.data.RecipeData
 import com.example.elvamao.databinding.FragmentCollectBinding
+import com.example.elvamao.databinding.FragmentRecommendBinding
 import com.example.elvamao.ui.BaseFragment
 import com.example.elvamao.ui.widget.PullRefreshRecyclerView
 import com.example.elvamao.ui.widget.RecipeAdapter
 import com.example.elvamao.viewmodel.CollectViewModel
 
-class CollectFragment : BaseFragment() {
+/**
+ * The recipe datas in collect feeds are loaded from database
+ */
+class CollectFragment : Fragment() {
 
     companion object{
         val TAG = CollectFragment::class.simpleName
@@ -28,9 +34,18 @@ class CollectFragment : BaseFragment() {
     private lateinit var mRecyclerView : PullRefreshRecyclerView
     private lateinit var mRecipeAdapter : RecipeAdapter
 
-    override fun getLayoutResId(): Int = R.layout.fragment_collect
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        mDatabinding = FragmentCollectBinding.inflate(LayoutInflater.from(context), container, false)
+        setupRecyclerView()
+        initViewModel()
+        return mDatabinding.root
+    }
 
-    override fun initViewModel() {
+    private fun initViewModel() {
         mViewModel = ViewModelProvider(this).get(CollectViewModel::class.java)
         mViewModel.setContext(activity)
         mViewModel.getCollectedRecipesLiveData().observe(viewLifecycleOwner, Observer {
@@ -63,10 +78,6 @@ class CollectFragment : BaseFragment() {
         mDatabinding.circularProgressIndicator.visibility = View.GONE
     }
 
-    override fun initViews(inflater: LayoutInflater, container: ViewGroup?) {
-        mDatabinding = FragmentCollectBinding.inflate(inflater, container, false)
-        setupRecyclerView()
-    }
 
     private fun setupRecyclerView() {
         mRecipeAdapter = context?.let { RecipeAdapter(it) }!!
@@ -89,10 +100,10 @@ class CollectFragment : BaseFragment() {
         mRecyclerView = mDatabinding.pullRefreshRecyclerView
         mRecyclerView.setEnableLoadMore(true)
         mRecyclerView.setEnablePullRefresh(true)
-        mRecyclerView.setLinearLayout()
+        mRecyclerView.setGridLayout(2)
         mRecyclerView.setPullLoadMoreRefreshListener(object : PullRefreshRecyclerView.PullRefreshLoadMoreListener{
             override fun onRefresh() {
-
+                mViewModel.getCollectedRecipesLiveData()
             }
 
             override fun onLoadMore() {

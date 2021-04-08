@@ -1,16 +1,12 @@
 package com.example.elvamao.ui.widget
 
-import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.AbsListView
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.elvamao.R
@@ -32,6 +28,7 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
     /**
      * views
      */
+    private lateinit var mRootView : View
     private lateinit var mDataBinding: PullRefreshRecyclerViewBinding
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
@@ -49,8 +46,8 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
      * recyclerview state flags
      */
     private var hasMore = false
-    private var isRefresh = false
-    private var isLoadMore = false
+    private var mIsRefresh = false
+    private var mIsLoadingMore = false
 
     /**
      * listeners
@@ -58,8 +55,36 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
     private lateinit var mPullLoadMoreListener: PullRefreshLoadMoreListener
 
     private fun initViews(context: Context) {
-        val root = inflate(context, R.layout.pull_refresh_recycler_view, this)
-        mRecyclerView = root.findViewById(R.id.recycler_view)
+        mRootView = inflate(context, R.layout.pull_refresh_recycler_view, this)
+        setUpRecyclerView()
+        setUpSwipeRefreshView()
+        setUpLoadMoreView()
+    }
+
+    private fun setUpLoadMoreView() {
+        mFooterLayout = mRootView.findViewById(R.id.footerView)
+        mLoadMoreLayout = mRootView.findViewById(R.id.loadMoreLayout)
+        mLoadMoreTextView = mRootView.findViewById(R.id.loadMoreText)
+    }
+
+    private fun setUpSwipeRefreshView(){
+
+            var mSwipeRefreshListener = SwipeRefreshLayout.OnRefreshListener {
+                if(!mIsRefresh){
+                    mIsRefresh = true
+                    if(this::mPullLoadMoreListener.isInitialized){
+                        mPullLoadMoreListener.onRefresh()
+                    }
+                }
+            }
+            mSwipeRefreshLayout = mRootView.findViewById(R.id.swipe_refresh_layout)
+            mSwipeRefreshLayout.setOnRefreshListener(mSwipeRefreshListener)
+            mSwipeRefreshLayout.visibility = VISIBLE
+
+    }
+
+    private fun setUpRecyclerView(){
+        mRecyclerView = mRootView.findViewById(R.id.recycler_view)
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.itemAnimator = DefaultItemAnimator()
 
@@ -69,6 +94,7 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItemPos + 1 == recyclerView.adapter?.itemCount) {
                     mPullLoadMoreListener.onLoadMore()
+                    showLoadingMoreView()
                     Log.d(TAG, "onScrollStateChanged | show footer or load more data if have ")
                 }
             }
@@ -80,47 +106,39 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
             }
         }
         mRecyclerView.addOnScrollListener(onScrollListener)
-
-        var mSwipeRefreshListener = SwipeRefreshLayout.OnRefreshListener {
-            if(!isRefresh){
-                isRefresh = true
-                if(this::mPullLoadMoreListener.isInitialized){
-                    mPullLoadMoreListener.onRefresh()
-                }
-            }
-        }
-        mSwipeRefreshLayout = root.findViewById(R.id.swipe_refresh_layout)
-        mSwipeRefreshLayout.setOnRefreshListener(mSwipeRefreshListener)
-
-        mFooterLayout = root.findViewById(R.id.footerView)
-        mLoadMoreLayout = root.findViewById(R.id.loadMoreLayout)
-        mLoadMoreTextView = root.findViewById(R.id.loadMoreText)
-//        mDataBinding = PullRefreshRecyclerViewBinding.inflate(LayoutInflater.from(context), this, false)
-//        mRecyclerView = mDataBinding.recyclerView
-//        mRecyclerView.setHasFixedSize(true)
-//        mRecyclerView.itemAnimator = DefaultItemAnimator()
-//
-//        mSwipeRefreshLayout = mDataBinding.swipeRefreshLayout
-//        mSwipeRefreshLayout.setOnRefreshListener(mSwipeRefreshListener)
-//
-//        mFooterLayout = mDataBinding.footerView.root as View
-//        mLoadMoreLayout = mDataBinding.footerView.loadMoreLayout
-//        mLoadMoreTextView = mDataBinding.footerView.loadMoreText
     }
 
-    fun isRefreshing() = isRefresh
+    private fun showLoadingMoreView() {
+        mFooterLayout.visibility = VISIBLE
+        mLoadMoreTextView.text = "pull to load more"
+
+    }
+    fun isRefreshing() = mIsRefresh
 
     fun setRefreshing(isRefreshing : Boolean) {
-        isRefresh = isRefreshing
+        mIsRefresh = isRefreshing
         mSwipeRefreshLayout.isRefreshing = isRefreshing
     }
 
+    fun setIsLoadingMore(isLoadingMore : Boolean){
+        mIsLoadingMore = isLoadingMore
+        mFooterLayout.visibility = if(mIsLoadingMore) VISIBLE else GONE
+    }
+
+    fun isLoadingMore() = mIsLoadingMore
+
     fun setEnablePullRefresh(enable : Boolean) {
         enablePullRefresh = enable
+        if(this::mSwipeRefreshLayout.isInitialized) {
+            mSwipeRefreshLayout.visibility = if (enablePullRefresh) VISIBLE else GONE
+        }
     }
 
     fun setEnableLoadMore(enable: Boolean) {
         enableLoadMore = enable
+        if(this::mFooterLayout.isInitialized){
+            mFooterLayout.visibility = if(enableLoadMore) VISIBLE else GONE
+        }
     }
 
     fun setAdapter(adapter: RecipeAdapter) {

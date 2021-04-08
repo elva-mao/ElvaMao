@@ -33,12 +33,12 @@ data class RecipeData(@PrimaryKey @SerializedName("id") var id : Long) : Parcela
     @ColumnInfo
     var isCollected : Boolean = false
     // encounter a problem that this field content size is too big which cause data lose when use intent to trans between activitys
-    @Ignore
-    @SerializedName("extendedIngredients")
-    var extendedIngredients: MutableList<Ingredients> = mutableListOf()
-    @Ignore
-    @SerializedName("analyzedInstructions")
-    var instructions: MutableList<Instruction> = mutableListOf()
+//    @Ignore
+//    @SerializedName("extendedIngredients")
+//    var extendedIngredients: MutableList<Ingredients> = mutableListOf()
+//    @Ignore
+//    @SerializedName("analyzedInstructions")
+//    var instructions: MutableList<Instruction> = mutableListOf()
     @ColumnInfo
     @SerializedName("instructions")
     var htmlInstructions : String = ""
@@ -94,7 +94,7 @@ data class RecipeData(@PrimaryKey @SerializedName("id") var id : Long) : Parcela
     }
 
     override fun toString(): String {
-        return "RecipeData(id=$id, title='$title', imageUrl='$imageUrl', aggregateLikes=$aggregateLikes, readyInMinutes=$readyInMinutes, collectCount=$collectCount, shareCount=$shareCount, isLiked=$isLiked, isCollected=$isCollected, extendedIngredients=$extendedIngredients, instructions=$instructions, htmlInstructions='$htmlInstructions')"
+        return "RecipeData(id=$id, title='$title', imageUrl='$imageUrl', aggregateLikes=$aggregateLikes, readyInMinutes=$readyInMinutes, collectCount=$collectCount, shareCount=$shareCount, isLiked=$isLiked, isCollected=$isCollected,  htmlInstructions='$htmlInstructions')"
     }
 
     companion object CREATOR : Parcelable.Creator<RecipeData> {
