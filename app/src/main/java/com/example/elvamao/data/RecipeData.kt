@@ -43,6 +43,9 @@ data class RecipeData(@PrimaryKey @SerializedName("id") var id : Long) : Parcela
     @SerializedName("instructions")
     var htmlInstructions : String = ""
 
+    init{
+        initFakeData()
+    }
 
     constructor(parcel: Parcel) : this(parcel.readLong()) {
         title = parcel.readString().toString()
@@ -53,8 +56,8 @@ data class RecipeData(@PrimaryKey @SerializedName("id") var id : Long) : Parcela
     }
 
     fun initFakeData() {
-         collectCount = Random.nextLong(0, aggregateLikes)
-         shareCount = Random.nextLong(0, aggregateLikes)
+         collectCount = Random.nextLong(0, 100)
+         shareCount = Random.nextLong(0, 100)
     }
 
 
@@ -107,6 +110,18 @@ data class RecipeData(@PrimaryKey @SerializedName("id") var id : Long) : Parcela
         }
     }
 
+    fun copy(data: RecipeData) {
+        id = data.id
+        title = data.title
+        imageUrl = data.imageUrl
+        aggregateLikes = data.aggregateLikes
+        isLiked = data.isLiked
+        collectCount = data.collectCount
+        isCollected = data.isCollected
+        shareCount = data.shareCount
+        readyInMinutes = data.readyInMinutes
+        htmlInstructions = data.htmlInstructions
+    }
 }
 
 data class Ingredients(@SerializedName("id") var id : Long) : Parcelable{

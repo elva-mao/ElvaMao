@@ -20,6 +20,7 @@ import com.example.elvamao.ui.BaseFragment
 import com.example.elvamao.ui.widget.PullRefreshRecyclerView
 import com.example.elvamao.ui.widget.RecipeAdapter
 import com.example.elvamao.viewmodel.CollectViewModel
+import com.example.elvamao.viewmodel.RecipeViewModel
 
 /**
  * The recipe datas in collect feeds are loaded from database
@@ -29,7 +30,7 @@ class CollectFragment : Fragment() {
     companion object{
         val TAG = CollectFragment::class.simpleName
     }
-    private lateinit var mViewModel: CollectViewModel
+    private lateinit var mViewModel: RecipeViewModel
     private lateinit var mDatabinding : FragmentCollectBinding
     private lateinit var mRecyclerView : PullRefreshRecyclerView
     private lateinit var mRecipeAdapter : RecipeAdapter
@@ -46,7 +47,7 @@ class CollectFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        mViewModel = ViewModelProvider(this).get(CollectViewModel::class.java)
+        mViewModel = activity?.let { ViewModelProvider(it).get(RecipeViewModel::class.java) }!!
         mViewModel.setContext(activity)
         mViewModel.getCollectedRecipesLiveData().observe(viewLifecycleOwner, Observer {
             Log.d(TAG, "initViewModel | recipeDatas : $it")
