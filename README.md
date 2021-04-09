@@ -1,7 +1,7 @@
-#  Yummy
+#  YummY
 ##  Introduction
 
-Yummy is a an app where you can browse recipes. The app displays them in a list. You can collect, like or share them. You can check the details of the recipe in the detail page.
+YummY is a an app where you can browse recipes. The app displays them in a list. You can collect, like or share them. You can check the details of the recipe in the detail page.
 
 It is just the beginning, I'll polish it continually~
 
