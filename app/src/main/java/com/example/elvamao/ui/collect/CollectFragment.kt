@@ -62,6 +62,7 @@ class CollectFragment : Fragment() {
     private fun showNoDataView(){
         mDatabinding.tvNoData.visibility = View.VISIBLE
         mDatabinding.pullRefreshRecyclerView.visibility = View.GONE
+        mDatabinding.circularProgressIndicator.visibility = View.GONE
     }
 
     private fun updateRecyclerView(list : MutableList<RecipeData>) {
@@ -76,6 +77,7 @@ class CollectFragment : Fragment() {
             mRecyclerView.setRefreshing(false)
         }
         mDatabinding.circularProgressIndicator.visibility = View.GONE
+
     }
 
 

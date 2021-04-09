@@ -9,10 +9,11 @@
 
         <TextView
             android:id="@+id/tv_no_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:text="@string/no_collected_recipe_data"
             android:layout_gravity="center"
+            android:gravity="center"
             android:visibility="gone"
             android:textSize="@dimen/collect_no_data_text_size"
             android:textColor="@color/cardview_dark_background"/>

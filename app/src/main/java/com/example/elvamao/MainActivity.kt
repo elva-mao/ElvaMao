@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         mFragmentManager.beginTransaction().apply {
             add(R.id.fragment_container, mRecommendFragment , getString(R.string.title_Recommend)).show(mRecommendFragment)
             add(R.id.fragment_container, mCollectFragment, getString(R.string.title_collect)).hide(mCollectFragment)
-            add(R.id.fragment_container, mNotificationFragment, getString(R.string.title_notifications)).hide(mNotificationFragment)
+          //  add(R.id.fragment_container, mNotificationFragment, getString(R.string.title_notifications)).hide(mNotificationFragment)
         }.commit()
 
         mNavView= findViewById(R.id.nav_view)
@@ -56,11 +56,11 @@ class MainActivity : AppCompatActivity() {
                     mActiveFragment = mCollectFragment
                     true
                 }
-                R.id.navigation_notifications -> {
-                    mFragmentManager.beginTransaction().hide(mActiveFragment).show(mNotificationFragment).commit()
-                    mActiveFragment = mNotificationFragment
-                    true
-                }
+//                R.id.navigation_notifications -> {
+//                    mFragmentManager.beginTransaction().hide(mActiveFragment).show(mNotificationFragment).commit()
+//                    mActiveFragment = mNotificationFragment
+//                    true
+//                }
                 else -> false
             }
         }
