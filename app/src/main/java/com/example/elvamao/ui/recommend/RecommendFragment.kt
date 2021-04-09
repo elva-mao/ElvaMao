@@ -16,13 +16,14 @@ import com.example.elvamao.databinding.FragmentRecommendBinding
 import com.example.elvamao.listeners.IUserActionListener
 import com.example.elvamao.ui.widget.PullRefreshRecyclerView
 import com.example.elvamao.ui.widget.RecipeAdapter
-import com.example.elvamao.viewmodel.RecommendViewModel
+import com.example.elvamao.viewmodel.RecipeViewModel
+
 /**
  * The recipe datas in recommend feeds are loaded from server
  */
 class RecommendFragment : Fragment(), IUserActionListener {
 
-    private lateinit var mRecommendViewModel: RecommendViewModel
+    private lateinit var mViewModel: RecipeViewModel
     private lateinit var mDatabinding: FragmentRecommendBinding
     private lateinit var mRecipeAdapter: RecipeAdapter
     private lateinit var mRecyclerView : PullRefreshRecyclerView
@@ -48,11 +49,11 @@ class RecommendFragment : Fragment(), IUserActionListener {
         mRecyclerView.setGridLayout(2)
         mRecyclerView.setPullLoadMoreRefreshListener(object : PullRefreshRecyclerView.PullRefreshLoadMoreListener{
             override fun onRefresh() {
-                mRecommendViewModel.refreshData()
+                mViewModel.refreshRecommendRecipes()
             }
 
             override fun onLoadMore() {
-                mRecommendViewModel.loadMoreRecipes()
+                mViewModel.loadMoreRecommendRecipes()
                 mRecyclerView.setIsLoadingMore(true)
             }
         })
@@ -60,9 +61,9 @@ class RecommendFragment : Fragment(), IUserActionListener {
     }
 
     private fun setupViewModel() {
-        mRecommendViewModel = ViewModelProvider(this).get(RecommendViewModel::class.java)
-        mRecommendViewModel.setContext(activity)
-        mRecommendViewModel.getRecipeListLiveData().observe(viewLifecycleOwner, Observer {
+        mViewModel = activity?.let { ViewModelProvider(it).get(RecipeViewModel::class.java) }!!
+        mViewModel.setContext(activity)
+        mViewModel.getRecommendRecipesLiveData().observe(viewLifecycleOwner, Observer {
             mRecipeAdapter.initAdapterData(it)
             mDatabinding.circularProgressIndicator.visibility = View.GONE
             Log.d(RecommendFragment::class.java.simpleName, "setupViewModel |  data size ${it.size}")
@@ -99,7 +100,7 @@ class RecommendFragment : Fragment(), IUserActionListener {
 
     override fun onClickCollect(recipeData: RecipeData) {
         //save it to local db
-       mRecommendViewModel.saveRecipeDataToDB(recipeData)
+       mViewModel.saveCollectedRecipeToDB(recipeData)
     }
 
     override fun onClickShare() {
