@@ -99,7 +99,7 @@ class RecipeViewModel : ViewModel() {
     }
 
     private fun updateCollectRecipeLiveData(recipeData: RecipeData){
-        Log.d(CollectViewModel.TAG,"updateCollectRecipeLiveData")
+        Log.d(TAG,"updateCollectRecipeLiveData")
         var collectedRecipes =  mCollectedRecipesLiveData.value
         collectedRecipes?.let {
             if(recipeData.isCollected) {
@@ -120,10 +120,10 @@ class RecipeViewModel : ViewModel() {
         mCoroutineScope.launch(Dispatchers.IO) {
             var recipeDataList = mRecipeRepository.loadCollectedRecipesFromDB()
             try {
-                Log.d(CollectViewModel.TAG,"loadCollectedRecipesFromDB | recipeDataList $recipeDataList")
+                Log.d(TAG,"loadCollectedRecipesFromDB | recipeDataList $recipeDataList")
                 mCollectedRecipesLiveData.postValue(recipeDataList)
             }catch (e : Exception) {
-                Log.d(CollectViewModel.TAG,"loadCollectedRecipesFromDB | exception ${e.message}")
+                Log.d(TAG,"loadCollectedRecipesFromDB | exception ${e.message}")
             }
         }
     }
