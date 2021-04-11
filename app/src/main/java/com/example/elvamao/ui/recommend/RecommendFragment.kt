@@ -54,7 +54,6 @@ class RecommendFragment : Fragment(), IUserActionListener {
 
             override fun onLoadMore() {
                 mViewModel.loadMoreRecommendRecipes()
-                mRecyclerView.setIsLoadingMore(true)
             }
         })
         mRecyclerView.setAdapter(mRecipeAdapter)
@@ -66,9 +65,10 @@ class RecommendFragment : Fragment(), IUserActionListener {
         mViewModel.getRecommendRecipesLiveData().observe(viewLifecycleOwner, Observer {
             mRecipeAdapter.initAdapterData(it)
             mDatabinding.circularProgressIndicator.visibility = View.GONE
-            Log.d(RecommendFragment::class.java.simpleName, "setupViewModel |  data size ${it.size}")
+            mDatabinding.pullRefreshRecyclerView.visibility = View.VISIBLE
             updateRefreshView(it.size)
             updateLoadMoreView()
+            Log.d(RecommendFragment::class.java.simpleName, "setupViewModel |  data size ${it.size}")
         })
     }
     /**
@@ -106,5 +106,10 @@ class RecommendFragment : Fragment(), IUserActionListener {
     override fun onClickShare() {
         Toast.makeText(activity, activity?.resources?.getString(R.string.share_recipe_to_social_platforms), Toast.LENGTH_LONG).show()
         //todo later integrate the share sdk
+    }
+
+    override fun onClickTabToRefresh() {
+        mRecyclerView.scrollToTopAndRefresh()
+        mViewModel.refreshRecommendRecipes()
     }
 }

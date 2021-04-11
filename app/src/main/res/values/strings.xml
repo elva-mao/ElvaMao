@@ -8,5 +8,5 @@
     <string name="load_more_completed">No more recipes</string>
     <string name="refresh_completed">recommend</string>
     <string name="share_recipe_to_social_platforms">Share This Recipe!</string>
-    <string name="no_collected_recipe_data">Empty here! Why not collect some recipes from recommend feeds!</string>
+    <string name="jump_to_recommend_feeds">Click to collect recipes !</string>
 </resources>

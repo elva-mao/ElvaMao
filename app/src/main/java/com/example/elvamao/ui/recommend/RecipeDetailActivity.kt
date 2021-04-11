@@ -70,6 +70,7 @@ class RecipeDetailActivity : AppCompatActivity() {
         databinding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_share -> {
+                    Toast.makeText(this, resources?.getString(R.string.share_recipe_to_social_platforms), Toast.LENGTH_LONG).show()
                     //generateShareIntent() todo
                     true
                 }

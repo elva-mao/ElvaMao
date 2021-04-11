@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.elvamao.dao.AppDatabase
+import com.example.elvamao.listeners.IUserActionListener
 import com.example.elvamao.ui.collect.CollectFragment
 import com.example.elvamao.ui.notifications.NotificationsFragment
 import com.example.elvamao.ui.recommend.RecommendFragment
@@ -45,25 +46,40 @@ class MainActivity : AppCompatActivity() {
 
         mNavView= findViewById(R.id.nav_view)
         mNavView.setOnNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.navigation_recommend -> {
-                    mFragmentManager.beginTransaction().hide(mActiveFragment).show(mRecommendFragment).commit()
+            switchTab(menuItem.itemId)
+        }
+    }
+
+    fun switchTab(itemId : Int) : Boolean {
+        when (itemId) {
+            R.id.navigation_recommend -> {
+                if (mActiveFragment == mRecommendFragment) {
+                    (mRecommendFragment as IUserActionListener).onClickTabToRefresh()
+                } else {
+                    mFragmentManager.beginTransaction().hide(mActiveFragment)
+                        .show(mRecommendFragment).commit()
                     mActiveFragment = mRecommendFragment
-                    true
                 }
-                R.id.navigation_collect -> {
-                    mFragmentManager.beginTransaction().hide(mActiveFragment).show(mCollectFragment).commit()
+                true
+            }
+            R.id.navigation_collect -> {
+                if (mActiveFragment == mCollectFragment) {
+                    (mCollectFragment as IUserActionListener).onClickTabToRefresh()
+                } else {
+                    mFragmentManager.beginTransaction().hide(mActiveFragment)
+                        .show(mCollectFragment).commit()
                     mActiveFragment = mCollectFragment
-                    true
                 }
+                true
+            }
 //                R.id.navigation_notifications -> {
 //                    mFragmentManager.beginTransaction().hide(mActiveFragment).show(mNotificationFragment).commit()
 //                    mActiveFragment = mNotificationFragment
 //                    true
 //                }
-                else -> false
-            }
+            else -> false
         }
+        return false
     }
 
 }

@@ -94,7 +94,7 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItemPos + 1 == recyclerView.adapter?.itemCount) {
                     mPullLoadMoreListener.onLoadMore()
-                    showLoadingMoreView()
+                    setIsLoadingMore(true)
                     Log.d(TAG, "onScrollStateChanged | show footer or load more data if have ")
                 }
             }
@@ -108,11 +108,7 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
         mRecyclerView.addOnScrollListener(onScrollListener)
     }
 
-    private fun showLoadingMoreView() {
-        mFooterLayout.visibility = VISIBLE
-        mLoadMoreTextView.text = "pull to load more"
 
-    }
     fun isRefreshing() = mIsRefresh
 
     fun setRefreshing(isRefreshing : Boolean) {
@@ -123,6 +119,7 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
     fun setIsLoadingMore(isLoadingMore : Boolean){
         mIsLoadingMore = isLoadingMore
         mFooterLayout.visibility = if(mIsLoadingMore) VISIBLE else GONE
+        mLoadMoreTextView.text = if(mIsLoadingMore) "is loading data" else "load data finished"
     }
 
     fun isLoadingMore() = mIsLoadingMore
@@ -175,6 +172,18 @@ class PullRefreshRecyclerView  @JvmOverloads constructor(
         val staggeredGridLayoutManager =
             StaggeredGridLayoutManager(spanCount, LinearLayoutManager.VERTICAL)
         mRecyclerView.layoutManager = staggeredGridLayoutManager
+    }
+
+    /**
+     * recyclerview scroll to top
+     * trigger swipeRefreshLayout to refresh
+     */
+    fun scrollToTopAndRefresh() {
+        mRecyclerView.scrollToPosition(0)
+        mIsRefresh = true
+        mSwipeRefreshLayout.post(Runnable {
+            mSwipeRefreshLayout.isRefreshing = true
+        })
     }
 
     /**

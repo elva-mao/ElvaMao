@@ -9,4 +9,5 @@ interface IUserActionListener {
     fun onClickLike()
     fun onClickCollect(recipeData: RecipeData)
     fun onClickShare()
+    fun onClickTabToRefresh()
 }

@@ -113,6 +113,7 @@
                     android:id="@+id/recipe_ready_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/doder_blue"
                     android:layout_marginStart="@dimen/margin_small"
                     android:layout_marginEnd="@dimen/margin_small"
                     android:gravity="center_horizontal"

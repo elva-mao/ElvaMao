@@ -5,13 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.elvamao.MainActivity
+import com.example.elvamao.R
 import com.example.elvamao.data.RecipeData
 import com.example.elvamao.databinding.FragmentCollectBinding
+import com.example.elvamao.listeners.IUserActionListener
 import com.example.elvamao.ui.widget.PullRefreshRecyclerView
 import com.example.elvamao.ui.widget.RecipeAdapter
 import com.example.elvamao.viewmodel.RecipeViewModel
@@ -19,7 +23,7 @@ import com.example.elvamao.viewmodel.RecipeViewModel
 /**
  * The recipe datas in collect feeds are loaded from database
  */
-class CollectFragment : Fragment() {
+class CollectFragment : Fragment(), IUserActionListener{
 
     companion object{
         val TAG = CollectFragment::class.simpleName
@@ -55,14 +59,19 @@ class CollectFragment : Fragment() {
     }
 
     private fun showNoDataView(){
-        mDatabinding.tvNoData.visibility = View.VISIBLE
+        mDatabinding.btnJumpToRecommendFeeds.visibility = View.VISIBLE
+        mDatabinding.btnJumpToRecommendFeeds.setOnClickListener(View.OnClickListener {
+            if(activity is MainActivity){
+                (activity as MainActivity).switchTab(R.id.navigation_recommend)
+            }
+        })
         mDatabinding.pullRefreshRecyclerView.visibility = View.GONE
         mDatabinding.circularProgressIndicator.visibility = View.GONE
     }
 
     private fun updateRecyclerView(list : MutableList<RecipeData>) {
         mRecipeAdapter.initAdapterData(list)
-        mDatabinding.tvNoData.visibility = View.GONE
+        mDatabinding.btnJumpToRecommendFeeds.visibility = View.GONE
         mDatabinding.pullRefreshRecyclerView.visibility = View.VISIBLE
         mDatabinding.circularProgressIndicator.visibility = View.GONE
     }
@@ -72,12 +81,13 @@ class CollectFragment : Fragment() {
             mRecyclerView.setRefreshing(false)
         }
         mDatabinding.circularProgressIndicator.visibility = View.GONE
-
     }
 
 
     private fun setupRecyclerView() {
-        mRecipeAdapter = context?.let { RecipeAdapter(it) }!!
+        mRecipeAdapter = context?.let {
+            RecipeAdapter(it).apply { setUserInteractionListener(this@CollectFragment) }
+        }!!
 
         val onScrollListener = object : RecyclerView.OnScrollListener() {
             var lastVisibleItemPos = 0
@@ -109,6 +119,25 @@ class CollectFragment : Fragment() {
         })
         mRecyclerView.setAdapter(mRecipeAdapter)
 
+    }
+
+    override fun onClickLike() {
+        //async network request to update data on server
+    }
+
+    override fun onClickCollect(recipeData: RecipeData) {
+        //save it to local db
+        mViewModel.saveCollectedRecipeToDB(recipeData)
+    }
+
+    override fun onClickShare() {
+        Toast.makeText(activity, activity?.resources?.getString(R.string.share_recipe_to_social_platforms), Toast.LENGTH_LONG).show()
+        //todo later integrate the share sdk
+    }
+
+    override fun onClickTabToRefresh() {
+        mRecyclerView.scrollToTopAndRefresh()
+        mViewModel.refreshRecommendRecipes()
     }
 
 }

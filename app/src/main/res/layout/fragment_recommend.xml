@@ -17,7 +17,8 @@
         <com.example.elvamao.ui.widget.PullRefreshRecyclerView
             android:id="@+id/pull_refresh_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
 
     </LinearLayout>
 </layout>

@@ -24,9 +24,6 @@ class RecipeAdapter(private val context : Context) : RecyclerView.Adapter<Recipe
         mRecipeDatas.apply {
             clear()
             addAll(recipes)
-//            for(recipe in this){
-//                recipe.initFakeData()
-//            }
         }
         notifyDataSetChanged()
         Log.d(TAG, "initAdapterData | recipeDatas : $mRecipeDatas")
